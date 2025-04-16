@@ -1,6 +1,6 @@
-# Bayesian demography
+## Hello!
 
-Materials for guest lecture given in 'Advanced Demographic Methods' (DEMG7310 / POP514) on 21 April 2025.
+Here are the materials for guest lecture given in 'Advanced Demographic Methods' (DEMG7310 / POP514) on 21 April 2025.
 
 ## Packages to install
 
@@ -13,3 +13,9 @@ If you would like to follow along with the coded examples, as well as having R a
 - `janitor`
 
 The `rstan` package is probably to most important but could be annoying to install. If you have issues, see detailed instructions here: https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
+
+## Lecture slides
+
+To add
+
+## Lab materials
