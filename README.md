@@ -1,6 +1,6 @@
 ## Hello!
 
-Here are the materials for guest lecture given in 'Advanced Demographic Methods' (DEMG7310 / POP514) on 21 April 2025.
+Here are some materials for a guest lecture given on Bayesian Demography as part of the 'Advanced Demographic Methods' (DEMG7310 / POP514) course. 
 
 ## Packages to install
 
@@ -19,3 +19,5 @@ The `rstan` package is probably to most important but could be annoying to insta
 To add
 
 ## Lab materials
+
+To add
