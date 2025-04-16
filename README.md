@@ -13,7 +13,7 @@ If you would like to follow along with the coded examples, as well as having R a
 - `janitor`
 - `rcbayes`
 
-The `rstan` package is probably to most important but could be annoying to install. If you have issues, see detailed instructions here: https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
+The `rstan` package is probably the most important but could be annoying to install. If you have issues, see detailed instructions here: https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
 
 ## Lecture slides
 
