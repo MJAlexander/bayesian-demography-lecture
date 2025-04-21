@@ -1,0 +1,149 @@
+---
+title: "Bayesian Rogers-Castro models for migration"
+author: "Monica Alexander"
+format: pdf
+number-sections: true
+toc: true
+execute: 
+  echo: true
+  warning: false
+  message: false
+---
+
+# Overview
+
+This Quarto document illustrates how to fit Rogers-Castro models to age-specific migration rates using the `rcbayes` R package. [Here's a paper](https://www.demographic-research.org/articles/volume/49/42) that gives some more information the package.
+
+
+Load in the required packages:
+
+```{r}
+library(tidyverse)
+library(rcbayes)
+```
+
+# What is a Rogers-Castro model?
+
+The Rogers-Castro model (1981) for migration age schedules is multi-exponential parametric model that aims to capture the non-linear characteristic non-linear shape of migration. It has the form:
+$$
+\begin{aligned}
+m(x)= & a_1 \exp \left\{-\alpha_1 x\right\}+ \\
+& a_2 \exp \left\{-\alpha_2\left(x-\mu_2\right)-\exp \left[-\lambda_2\left(x-\mu_2\right)\right]\right\}+ \\
+& a_3 \exp \left\{-\alpha_3\left(x-\mu_3\right)-\exp \left[-\lambda_3\left(x-\mu_3\right)\right]\right\}+ \\
+& a_4 \exp \left\{\alpha_4 x\right\}+ \\
+& c
+\end{aligned}
+$$
+where $m(x)$ is the migration rate (in- or out-) for age $x$. The successive additive components of the model represent pre-working, working, retirement, post-retirement, and overall migration, respectively. Various versions of the model can be estimated; for example, a simpler version would remove the components related to retirement and post-retirement peaks. 
+The `rcbayes` package has a built-in interaction Shiny application that you can use to explore how different parameter values affect the shape of the migration age curve:
+
+```{r, eval=FALSE}
+rcbayes::interact_rc()
+```
+
+# Read in data
+
+For this example, we'll be using data from the 2022 round of the American Community Survey (ACS). The data below show the population by age and number of in-migrants in the past year by age for each US state. 
+
+```{r}
+d <- read_csv("../data/us_state_mig.csv")
+```
+
+We can plot the in-migration rates observed in the ACS for a few different states. Florida has a clear retirement peak, which is not obvious in the other examples. Maine, which is a smaller state, has much noisier data. 
+
+```{r}
+d |> 
+  filter(state %in% c("florida", "new york", "california", "maine")) |> 
+  ggplot(aes(age, rate, color = state)) + 
+  geom_point()+
+  facet_wrap(~state, scales = "free_y")+
+  theme(legend.position = "none")+
+  labs(title = "In-migration rates, 2022", y = "migration rate")
+```
+
+
+# Fit Rogers-Castro model
+
+Now we're going to fit a Rogers-Castro migration curve to some ACS data, starting with Florida. To do this, we're going to use the `mig_estimate_rc` function in the `rcbayes` package. This is a wrapper function for `rstan`, and allows you to specify which components of the curve to fit, as well as the usual Stan control settings. For Florida, let's fit the full 13 parameter model. 
+
+```{r}
+d_florida <- d |> filter(state=="florida")
+ages <- d_florida$age
+migrants <- d_florida$n_mig
+pop <-  d_florida$pop
+
+res <- rcbayes::mig_estimate_rc(ages = ages, 
+                                migrants = migrants, 
+                                pop = pop,
+                                pre_working_age = TRUE,
+                                working_age = TRUE,
+                                retirement = TRUE,
+                                post_retirement = TRUE,
+                                control = list(adapt_delta = 0.96),
+                                seed = 1899,
+                                refresh = 0)
+
+```
+
+The `res` object has several elements, including a summary of the model parameters, convergence checks, and the estimated fit and uncertainty. 
+
+```{r}
+names(res)
+res$pars_df
+```
+
+Let's pull out the fit dataframe (which also have the data), and plot to see what it looks like. 
+
+```{r}
+res$fit_df |> 
+  ggplot(aes(age, data)) + 
+  geom_point(aes(color = "data", fill = "data"))+
+  geom_line(aes(age, median, color = "fit"))+
+  geom_ribbon(aes(age, ymin = lower, ymax = upper, fill = "fit"), alpha = 0.2)+
+  scale_color_brewer(name = "", palette = "Set1")+
+  scale_fill_brewer(name = "", palette = "Set1")+
+  theme_bw()+
+  labs(title = "In-migration rates, Florida, 2022", 
+       subtitle = "Data from ACS, with Rogers-Castro fit", 
+       y = "migration rate")
+```
+
+## Another example 
+
+Let's now fit a reduced form of the Rogers Castro model to Maine. Rather than fitting the full model, we'll just fit the simplest model of pre-working age and working age migration. 
+
+```{r}
+d_maine <- d |> filter(state=="maine")
+ages <- d_maine$age
+migrants <- d_maine$n_mig
+pop <-  d_maine$pop
+
+res_maine <- rcbayes::mig_estimate_rc(ages = ages, 
+                                migrants = migrants, 
+                                pop = pop,
+                                pre_working_age = TRUE,
+                                working_age = TRUE,
+                                retirement = FALSE,
+                                post_retirement = FALSE,
+                                seed = 1865, 
+                                refresh = 0)
+```
+Plotting the results: 
+```{r}
+res_maine$fit_df |> 
+  ggplot(aes(age, data)) + 
+  geom_point(aes(color = "data", fill = "data"))+
+  geom_line(aes(age, median, color = "fit"))+
+  geom_ribbon(aes(age, ymin = lower, ymax = upper, fill = "fit"), alpha = 0.2)+
+  scale_color_brewer(name = "", palette = "Set1")+
+  scale_fill_brewer(name = "", palette = "Set1")+
+  theme_bw()+
+  labs(title = "In-migration rates, Maine, 2022", 
+       subtitle = "Data from ACS, with Rogers-Castro fit", 
+       y = "migration rate")
+```
+
+
+# Extensions
+
+The `rcbayes` package was designed for users to be able to fit Rogers-Castro models to a single population. The Stan code for the models in the packages is [here](https://github.com/jessieyeung/rcbayes/tree/master/inst/stan). These could be extended to fit, for example, hierarchical models for multiple areas at a time. 
