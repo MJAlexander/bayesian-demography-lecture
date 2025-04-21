@@ -17,8 +17,12 @@ The `rstan` package is probably the most important but could be annoying to inst
 
 ## Lecture slides
 
-To add
+pdf version is [here](https://github.com/MJAlexander/bayesian-demography-lecture/blob/main/slides/bayes_slides.pdf).
 
 ## Lab materials
 
-To add
+There are three labs written in Quarto files. (in the [`labs`](https://github.com/MJAlexander/bayesian-demography-lecture/tree/main/labs) folder). The data and models required to compile the Quarto documents are also in their respective folders. A pdf version of each lab is listed below. 
+
+- [Gompertz](https://github.com/MJAlexander/bayesian-demography-lecture/blob/main/labs/gompertz.pdf)
+- [SVD](https://github.com/MJAlexander/bayesian-demography-lecture/blob/main/labs/svd.pdf)
+- [Rogers Castro](https://github.com/MJAlexander/bayesian-demography-lecture/blob/main/labs/rogers_castro.pdf)
