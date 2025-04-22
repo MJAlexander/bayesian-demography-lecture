@@ -33,6 +33,6 @@ Here is an optional exercise based on the Gompertz lab.
 
 1. Download or read in the Deaths and Population data for Quebec from the [Canadian Human Mortality Database](http://www.bdlc.umontreal.ca/chmd/)
 2. Plot mortality rates on the log scale for ages 40+ for females in years 1940, 1980, and 2020.
-3. Fit a Gompertz model in Stan separately for each year specified above for females aged 40-105. Make some plots that show the estimates for $\log \alpha$ and $\beta$ for each of the years (`geom_point` with `geom_errorbar` would be suitable here)
-4. Now fit a dynamic Gompertz model for all years between 1940 and 2020 with a random walk on both $\log \alpha$ and $\beta$. Compare the resulting estimates to those in Step 3. How similar or different are they? What are the advantages and disadvantages of each approach?
-5. Rather than a random walk model on $\log \alpha$ and $\beta$ as in 4, imagine you would like to model these parameters with a quadratic function of time. How would you implement this in Stan?
+3. Fit a Gompertz model in Stan separately for each year specified above for females aged 40-105. Make some plots that show the estimates for log(alpha) and beta for each of the years (`geom_point` with `geom_errorbar` would be suitable here)
+4. Now fit a dynamic Gompertz model for all years between 1940 and 2020 with a random walk on both log(alpha) and beta. Compare the resulting estimates to those in Step 3. How similar or different are they? What are the advantages and disadvantages of each approach?
+5. Rather than a random walk model on log(alpha) and beta as in 4, imagine you would like to model these parameters with a quadratic function of time. How would you implement this in Stan?
